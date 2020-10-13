@@ -2,10 +2,12 @@
 from setuptools import find_packages, setup
 import io
 
+with open('VERSION') as fd:
+    VERSION = fd.read().strip()
 
 setup(
     name='pyh5column',
-    version='0.0.1',
+    version=VERSION,
     description='hdf5 table column store built on pytables',
     long_description=io.open('README.md', 'r', encoding='utf-8').read(),
     classifiers=[''],
@@ -19,7 +21,10 @@ setup(
     include_package_data=True,
     zip_safe=False,
     install_requires=[
-        'pytables',
+        'blosc',
+        'numpy',
+        'msgpack>=1.0.0',
+        'tables',
     ],
     entry_points={
     },
