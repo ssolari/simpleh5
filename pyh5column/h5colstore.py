@@ -15,7 +15,6 @@ be stored and what compressors are used.
 
 from datetime import datetime
 import logging
-#import msgpack
 import numpy as np
 import os
 import re
@@ -155,7 +154,7 @@ class H5ColStore(object):
                 except:
                     pass
 
-    def add_column(self, table_path: str, col_name: str, col_data: (list, tuple, np.ndarray),
+    def add_column(self, table_path: str, col_name: str, col_data: (list, tuple, np.ndarray)=None,
                    col_dtype: str=None, shape=(0,)):
         """
         Add a column of data to an existing table.  The length of the data must be the same length as the existing
@@ -168,6 +167,9 @@ class H5ColStore(object):
         :param shape: shape of column if different than (0,)
         :return:
         """
+
+        if col_data is None:
+            raise NotImplementedError(f'Default back filling is coming soon...')
 
         with self.open(mode='a') as h5:
 
