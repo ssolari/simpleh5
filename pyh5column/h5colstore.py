@@ -199,13 +199,13 @@ class H5ColStore(object):
                 colflavor[col_name] = 'python'
             self._write_attrs(h5, table_path, ATTR_COLFLAV, colflavor)
 
-    def _add_column(self, h5: tb.File, table_name: str, column_name: str, data: list, dtype: str, safe_mode: bool):
+    def _add_column(self, h5: tb.File, table_name: str, column_name: str, data: list, dtype: str, resize: bool):
 
         data = self._convert_data(data, dtype)
         colpath = self._path(table_name, column_name)
 
         if re.match(r'[osc](\d+)', dtype):
-            colnode = self._safe_col_str_change(h5, colpath, dtype, data, safe_mode)
+            colnode = self._safe_col_str_change(h5, colpath, dtype, data, resize)
         else:
             colnode = self._get_node(h5, colpath)
             if colnode is None:
@@ -334,7 +334,7 @@ class H5ColStore(object):
             col_dtypes = {}
 
         with self.open(mode='a') as h5:
-            self._append_ctable(h5, table_name, col_data, safe_mode=resize, col_dtypes=col_dtypes)
+            self._append_ctable(h5, table_name, col_data, resize=resize, col_dtypes=col_dtypes)
 
     def update_ctable(self, table_name: str, query: Union[list, tuple], col_data: dict,
                       resize: bool=True) -> None:
@@ -506,7 +506,7 @@ class H5ColStore(object):
 
         return return_data
 
-    def _append_ctable(self, h5, table_path: str, col_data: dict, safe_mode: bool=True,
+    def _append_ctable(self, h5, table_path: str, col_data: dict, resize: bool=True,
                        col_dtypes: Optional[dict]=None):
 
         if col_dtypes is None:
@@ -564,7 +564,7 @@ class H5ColStore(object):
                 colpath = self._path(table_path, col)
 
                 if re.match(r'[osc](\d+)', coldtype):
-                    colnode = self._safe_col_str_change(h5, colpath, coldtype, data, safe_mode)
+                    colnode = self._safe_col_str_change(h5, colpath, coldtype, data, resize)
                 else:
                     colnode = self._get_node(h5, colpath)
                     if colnode is None:
@@ -700,7 +700,7 @@ class H5ColStore(object):
         return colflavor
 
     def _create_column(self, h5: tb.File, colpath: str, atom: Optional[tb.Atom]=None, expectedrows: int=10000,
-                       shape: Optional[tuple]=None, data: Optional[list, tuple, np.ndarray]=None) -> tb.EArray:
+                       shape: Optional[tuple]=None, data: (list, tuple, np.ndarray)=None) -> tb.EArray:
         # create an EArray column and return the created node
 
         if data is None and shape is None:
@@ -869,9 +869,9 @@ class H5ColStore(object):
 
         return simpah5_attrs
 
-    def _safe_col_str_change(self, h5: tb.File, colpath: str, coldtype: str, data: (list, tuple), safe_mode: bool):
+    def _safe_col_str_change(self, h5: tb.File, colpath: str, coldtype: str, data: (list, tuple), resize: bool):
 
-        colnode = self._get_node(h5, colpath)
+        colnode = self._get_col(h5, colpath)
         if colnode is None:
             raise Exception(f"Table column doesn't exist: {colpath} in {self._h5file}")
 
@@ -886,7 +886,7 @@ class H5ColStore(object):
                             f'in {self._h5file}')
         dlen = int(m.group(1))
         if dlen > size:
-            if not safe_mode:
+            if not resize:
                 msg = f"Data corruption happening in {colpath}. Table may be corrupted." \
                       f"Serialized data len ({dlen}) > ({size + 1}) in {self._h5file}"
                 raise Exception(msg)
@@ -894,16 +894,14 @@ class H5ColStore(object):
 
                 logging.warning(f"Changing column size to {dlen} and overwriting ... {colpath}")
                 # safely rewrite data at expense of memory and time
-                # create new column of desired shape
-                new_data = np.empty(len(colnode), f'S{dlen}')
-                # todo could consider a for loop here to write data n rows at a time preventing full load into memory
-                # todo or just copy node with new data type??, need to ensure new array has correct dimesions then easy.
-                new_data[:] = colnode[:]
 
-                # write new data
                 tmp_col_path = colpath + '_tmp'
-                self._create_column(h5, tmp_col_path, atom=tb.StringAtom(dlen), data=new_data)
-                del new_data
+                # create new column of desired shape
+                newcolnode = self._create_column(h5, tmp_col_path, atom=tb.StringAtom(dlen))
+                # re-write all data into that column
+                # newcolnode.append(colnode[:])
+                for idx, row in enumerate(colnode.iterrows()):
+                    newcolnode.append([row])
 
                 # clean up old path and point to new path
                 h5.remove_node(colpath)
