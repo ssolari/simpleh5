@@ -56,7 +56,7 @@ class H5ColStore(object):
         """
         Open the file and return file handle to use with methods requiring open file handle.
 
-        Should be used as:
+        Should be used as::
 
             colstore = SimpaHdf5(filename)
             with colstore.open(mode='a') as h5:

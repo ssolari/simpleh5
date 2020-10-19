@@ -17,7 +17,7 @@ DOCS = 'docs/html'
 # CONFIGURATION
 IGNORE = []
 # should be False and rerun when pushing docs to git.  set to true to create local HTML docs for debuging.
-CREATE_LOCAL_DOCS = False
+CREATE_LOCAL_DOCS = True
 
 # get directory name
 REPO_NAME = os.path.basename(os.path.dirname(os.path.abspath(__file__)))
