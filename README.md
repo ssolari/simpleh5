@@ -10,7 +10,13 @@ data scientists time and allow them to focus on finding answers in data rather t
 Installation
 ============
 
-Coming soon...
+```python
+git clone https://github.com/ssolari/simpleh5.git
+cd simpleh5
+python setup.py install
+```
+
+Working on pip install and maybe conda install ...
 
 Example use
 ===========
