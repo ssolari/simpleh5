@@ -22,8 +22,8 @@ setup(
     zip_safe=False,
     install_requires=[
         'blosc',
-        'numpy',
         'msgpack>=1.0.0',
+        'numpy',
         'tables',
     ],
     entry_points={
