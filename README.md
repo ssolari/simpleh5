@@ -1,6 +1,21 @@
 # simpleh5
 
-A hdf5 table column store built on top of pytables
+A hdf5 table column store built on top of pytables.  Built for real-world data wrangling and applied analytics to save
+data scientists time and allow them to focus on finding answers in data rather than managing data.
+
+Installation
+============
+
+Coming soon...
+
+Example use
+===========
+
+Coming soon...
+
+Discussion
+==========
+
 
 H5ColStore is the top-level object to use to write and read tabular column stores.   The H5ColStore object is passed a string
 representing the full file path to the desired .h5(hdf5) file.   Instantiating the object is harmless, all future operations
