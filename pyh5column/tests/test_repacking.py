@@ -10,7 +10,7 @@ import tempfile
 import unittest
 import uuid
 
-from pyh5column import H5ColStore
+from simpleh5 import H5ColStore
 
 
 class TestRepacking(unittest.TestCase):

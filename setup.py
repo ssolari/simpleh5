@@ -6,7 +6,7 @@ with open('VERSION') as fd:
     VERSION = fd.read().strip()
 
 setup(
-    name='pyh5column',
+    name='simpleh5',
     version=VERSION,
     description='hdf5 table column store built on pytables',
     long_description=io.open('README.md', 'r', encoding='utf-8').read(),

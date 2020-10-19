@@ -1,6 +1,6 @@
 """
 Some characterization of the speed of h5 data access, comparing PyTables Table access to data vs accessing
-via columnar store in pyh5column.
+via columnar store in simpleh5.
 
 """
 
@@ -11,7 +11,7 @@ import time
 import os
 import tables as tb
 
-from pyh5column import H5ColStore
+from simpleh5 import H5ColStore
 
 
 loops = 5

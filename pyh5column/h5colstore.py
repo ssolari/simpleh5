@@ -23,8 +23,8 @@ import traceback
 from typing import Optional, Union
 import uuid
 
-from pyh5column.utilities.search_utilities import _filter_inds
-from pyh5column.utilities.serialize_utilities import msgpack_dumps, msgpack_loads
+from simpleh5.utilities.search_utilities import _filter_inds
+from simpleh5.utilities.serialize_utilities import msgpack_dumps, msgpack_loads
 
 ATTR_COLDTYPE = 'col_dtype'
 ATTR_COLFLAV = 'col_flavor'

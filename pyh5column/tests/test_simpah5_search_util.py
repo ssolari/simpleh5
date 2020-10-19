@@ -3,7 +3,7 @@
 import unittest
 import os
 
-from pyh5column.utilities.search_utilities import _build_search_string
+from simpleh5.utilities.search_utilities import _build_search_string
 
 
 class TestBuildString(unittest.TestCase):

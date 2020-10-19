@@ -11,11 +11,11 @@ import unittest
 import uuid
 
 
-from pyh5column import H5ColStore
+from simpleh5 import H5ColStore
 with open(os.path.join(os.path.dirname(__file__), '..', '..', 'VERSION')) as fd:
     VERSION = fd.read().strip()
 
-from pyh5column.utilities.serialize_utilities import msgpack_loads, msgpack_dumps
+from simpleh5.utilities.serialize_utilities import msgpack_loads, msgpack_dumps
 
 
 class TestMain(unittest.TestCase):

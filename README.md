@@ -1,4 +1,5 @@
-# pyh5column
+# simpleh5
+
 A hdf5 table column store built on top of pytables
 
 H5ColStore is the top-level object to use to write and read tabular column stores.   The H5ColStore object is passed a string

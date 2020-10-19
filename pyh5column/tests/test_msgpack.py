@@ -7,7 +7,7 @@ when pushing an encoded binary string with end null bytes to numpy, because nump
 import unittest
 import msgpack
 import numpy as np
-from pyh5column.utilities.serialize_utilities import str_dtype, obj_dtype
+from simpleh5.utilities.serialize_utilities import str_dtype, obj_dtype
 
 import sys
 PY_VER = sys.version[0]
