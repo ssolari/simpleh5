@@ -94,3 +94,81 @@ a .repack() on the file, which essentially re-copies and then re-names the entir
 that can be upto 2 orders of magnitude smaller than the original file (depending how much data was stored and how it
 was stored).
 
+Benchmarks
+==========
+
+Running the h5_speed_checks.py file in the tests directory allows some benchmarks of using Simpleh5 over pytables directly.
+The test is a large number of columns 200 with 100k rows of data.
+
+From the benchmarks the trade off is between writing data speed and reading subsets of data speed:
+  * Simpleh5 is 1.65x faster writing many columns of data.
+  * Simpleh5 is 24x faster in reading a full single column of data.
+  * Simpleh5 is 13x faster in reading a full single column of data when searching for a subset of that data.
+  * Simpleh5 is 1.45x faster searching a column for a set of indicies (about 10%) and pulling 10 other columns based on that search.
+  * Simpleh5 is about 2x slower at reading a single row of data.
+  * Simpleh5 is about 7.5x slower at reading ALL the data at once.
+
+Run on a 2015 Macbook Pro with SSD:
+
+```python
+Creating table with parameters:
+ 200 columns
+ 100000 rows (written in 20000 chunks)
+ 5 loops for average timing
+
+**** PyTables TABLES test
+  Avg Write all: 0.9483747959136963
+  Avg Read all: 0.21130704879760742
+  Avg Read single row: 0.16545023918151855
+  Avg Read single column: 0.1497964382171631
+  Avg Read 10 columns: 0.8331308841705323
+  Avg Read single column match few rows: 0.16088628768920898
+  Avg Read 10 columns with ~10% search from float range: 0.23775558471679686
+
+**** SimpleH5 H5ColStore test
+  Avg Write all: 0.5744123458862305
+  Avg Read all: 1.5925073146820068
+  Avg Read single row: 0.3414318561553955
+  Avg Read single column: 0.006180238723754883
+  Avg Read 10 columns: 0.06310362815856933
+  Avg Read single column match few rows: 0.011619806289672852
+  Avg Read 10 columns with ~10% search from float range: 0.16368341445922852
+
+****Comparison
+
+Write all average:
+  Tables: 0.9483747959136963
+  PyH5Col: 0.5744123458862305
+  Tables/PyH5Col ratio: 1.651034840573454
+
+Read all average:
+  Tables: 0.21130704879760742
+  PyH5Col: 1.5925073146820068
+  Tables/PyH5Col ratio: 0.13268827518057674
+
+Read single row average:
+  Tables: 0.16545023918151855
+  PyH5Col: 0.3414318561553955
+  Tables/PyH5Col ratio: 0.4845776285919184
+
+Read single column average:
+  Tables: 0.1497964382171631
+  PyH5Col: 0.006180238723754883
+  Tables/PyH5Col ratio: 24.23796958544546
+
+Read 10 columns average:
+  Tables: 0.8331308841705323
+  PyH5Col: 0.06310362815856933
+  Tables/PyH5Col ratio: 13.202582933536048
+
+Read single column match few rows average:
+  Tables: 0.16088628768920898
+  PyH5Col: 0.011619806289672852
+  Tables/PyH5Col ratio: 13.845866590065043
+
+Read 10 columns with ~10% search from float range average:
+  Tables: 0.23775558471679686
+  PyH5Col: 0.16368341445922852
+  Tables/PyH5Col ratio: 1.452533144560097
+```
+

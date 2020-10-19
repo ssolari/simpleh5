@@ -38,7 +38,7 @@ def check_many_cols_raw_tables():
         RSCM: [],
         R10P: [],
     }
-    print("\n****TABLES TEST")
+    print("\n**** PyTables TABLES test")
     fname = 'testfile_speed_check_tables.h5'
     remove_file(fname)
 
@@ -140,7 +140,7 @@ def check_many_cols_pyh5col():
         RSCM: [],
         R10P: [],
     }
-    print("\n****PH5Column HDF5 TEST")
+    print("\n**** SimpleH5 H5ColStore test")
     fname = 'testfile_speed_check_pyh5col.h5'
     remove_file(fname)
 
