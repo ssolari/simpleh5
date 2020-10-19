@@ -1,0 +1,15 @@
+channels:
+  - https://conda.anaconda.org/conda-forge
+dependencies:
+  - python=3.7
+  - blosc
+  - coverage
+  - nose
+  - numexpr
+  - numpy
+  - pip
+  - pytables
+  - pytest
+  - pytest-cov
+  - pip:
+    - msgpack>=1.0.0
