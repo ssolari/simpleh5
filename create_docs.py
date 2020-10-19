@@ -73,8 +73,8 @@ result = subprocess.run(cmd.split(' '))
 
 # modify conf.py file to make modifications
 def _mod_conf(i, line):
-    if re.match('\#sys.path', line):
-        line = "sys.path.insert(0, os.path.abspath('..'))\n"
+    if re.match('\#\s*sys.path', line):
+        line = "import sys\nimport os\nsys.path.insert(0, os.path.abspath('..'))\n"
     elif re.match('\#add_module_names =', line):
         line = 'add_module_names = False'
     elif re.match('html_theme', line):
@@ -101,9 +101,9 @@ def _mod_rst(i, line):
         if re.search(re.escape(pattern), line):
             return None
     # # include subclasses
-    # if re.search(":members:", line):
-    #     newline = re.sub("members", "inherited-members", line)
-    #     line = line + "\n" + newline
+    if re.search(":members:", line):
+        newline = re.sub("members", "inherited-members", line)
+        line = line + "\n" + newline
     if re.search("tests", line):
         # do not print tests
         line = None

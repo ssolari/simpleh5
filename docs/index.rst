@@ -3,6 +3,7 @@ simpleh5 package
 
 .. automodule:: simpleh5
     :members:
+    :inherited-members:
 
 .. toctree::
    :maxdepth: 4

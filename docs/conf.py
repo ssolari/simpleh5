@@ -12,7 +12,9 @@
 #
 # import os
 # import sys
-# sys.path.insert(0, '/Users/sorensolari/Documents/Simpa/code_stuff/simpleh5/simpleh5')
+import sys
+import os
+sys.path.insert(0, os.path.abspath('..'))
 
 
 # -- Project information -----------------------------------------------------
