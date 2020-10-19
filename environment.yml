@@ -5,11 +5,11 @@ dependencies:
   - blosc
   - coverage
   - nose
-  - numexpr
-  - numpy
   - pip
   - pytables
   - pytest
   - pytest-cov
+  - python=3.7
   - pip:
     - msgpack>=1.0.0
+    - sphinx-autodoc-annotation
