@@ -107,6 +107,8 @@ From the benchmarks the trade off is between writing data speed and reading subs
   * Simpleh5 is 1.45x faster searching a column for a set of indicies (about 10%) and pulling 10 other columns based on that search.
   * Simpleh5 is about 2x slower at reading a single row of data.
   * Simpleh5 is about 7.5x slower at reading ALL the data at once.
+ 
+Benchmarks for running over a network (like AWS EFS filesystem) coming soon...
 
 Run on a 2015 Macbook Pro with SSD:
 
