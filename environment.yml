@@ -2,7 +2,6 @@ channels:
   - https://conda.anaconda.org/conda-forge
 dependencies:
   - python=3.7
-  - blosc
   - coverage
   - nose
   - pip
@@ -11,5 +10,6 @@ dependencies:
   - pytest-cov
   - python=3.7
   - pip:
+    - blosc
     - msgpack>=1.0.0
     - sphinx-autodoc-annotation

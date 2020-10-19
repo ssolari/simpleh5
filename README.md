@@ -1,5 +1,6 @@
 # simpleh5
 [![Documentation Status](https://readthedocs.org/projects/simpleh5/badge/?version=latest)](https://simpleh5.readthedocs.io/en/latest/?badge=latest)
+![Test Status](https://travis-ci.com/ssolari/simpleh5.svg?branch=main)
 
 A hdf5 table column store built on top of pytables.  Built for real-world data wrangling and applied analytics to save
 data scientists time and allow them to focus on finding answers in data rather than managing data.
