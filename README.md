@@ -4,7 +4,7 @@
 A hdf5 table column store built on top of pytables.  Built for real-world data wrangling and applied analytics to save
 data scientists time and allow them to focus on finding answers in data rather than managing data.
 
-[Documentation](simpleh5.readthedocs.io) exists and is evolving...
+[Documentation](https://simpleh5.readthedocs.io) exists and is evolving...
 
 Installation
 ============
