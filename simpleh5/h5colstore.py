@@ -78,7 +78,8 @@ class H5ColStore(object):
 
         return fh
 
-    def create_ctable(self, table_name: str, col_dtypes: dict, col_shapes: Optional[dict]=None) -> None:
+    def create_ctable(self, table_name: str, col_dtypes: dict, col_shapes: Optional[dict]=None,
+                      expectedrows: int=10000) -> None:
         """
         Create a new coltable under table path.  Note that all data is compressed therefore unknown length strings can
         be hedged by using a large number and allowing compression to save space.   Even with S1000 a string 'a' will
@@ -98,6 +99,8 @@ class H5ColStore(object):
         :param col_shapes: (optional) dictionary of shapes for each column.  Should have the form (0,) or (0, x).
             Mostly used when a 2-d array will be a column.  Not needed if a column is 1 dimension i.e. (0,).  Note the
             first entry is 0 if creating an empty table and appending data.
+        :param expectedrows: (optional, default=10000) determines chunk size, if number of rows will be very large,
+            then good to specify to optimize chunking.
 
         :return:
 
@@ -121,16 +124,17 @@ class H5ColStore(object):
             col_shapes = {}
 
         with self.open(mode='a') as h5:
-            self._create_ctable(h5, table_name, col_dtypes, col_shapes)
+            self._create_ctable(h5, table_name, col_dtypes, col_shapes, expectedrows=expectedrows)
 
-    def _create_ctable(self, h5, table_path, col_dtype, col_shapes):
+    def _create_ctable(self, h5, table_path, col_dtype, col_shapes, expectedrows: int=10000):
 
         # convert all dtypes to lowercase
         for col in col_dtype:
             col_dtype[col] = col_dtype[col].lower()
 
         for col_name, dtype in col_dtype.items():
-            self._create_column_from_dtype(h5, table_path, col_name, dtype, col_shapes.get(col_name, None))
+            self._create_column_from_dtype(h5, table_path, col_name, dtype, col_shapes.get(col_name, None),
+                                           expectedrows=expectedrows)
 
         self._write_attrs(h5, table_path, ATTR_COLDTYPE, col_dtype)
 
@@ -716,26 +720,27 @@ class H5ColStore(object):
             atom=atom, shape=shape, expectedrows=expectedrows, filters=self._filters
         )
 
-    def _create_column_from_dtype(self, h5: tb.File, table_path: str, col_name: str, col_dtype: str, shape: tuple):
+    def _create_column_from_dtype(self, h5: tb.File, table_path: str, col_name: str, col_dtype: str, shape: tuple,
+                                  expectedrows: int=10000):
 
         colpath = self._path(table_path, col_name)
 
         if re.match(r'[nf]', col_dtype):
-            self._create_column(h5, colpath, atom=tb.Float64Atom(), shape=shape)
+            self._create_column(h5, colpath, atom=tb.Float64Atom(), shape=shape, expectedrows=expectedrows)
 
         elif re.match(r'i', col_dtype):
-            self._create_column(h5, colpath, atom=tb.Int64Atom(), shape=shape)
+            self._create_column(h5, colpath, atom=tb.Int64Atom(), shape=shape, expectedrows=expectedrows)
 
         elif re.match(r'[osc](\d+)', col_dtype):
             m = re.match(r'[osc](\d+)', col_dtype)
             size = int(m.group(1))
-            self._create_column(h5, colpath, atom=tb.StringAtom(size), shape=shape)
+            self._create_column(h5, colpath, atom=tb.StringAtom(size), shape=shape, expectedrows=expectedrows)
 
         else:
             raise Exception(f'Unrecognized col_dtype: {col_dtype}')
 
-    def _create_column_from_data(self, h5: tb.File, table_path: str, col_name: str,
-                                 data: (list, tuple, np.ndarray)) -> str:
+    def _create_column_from_data(self, h5: tb.File, table_path: str, col_name: str, data: (list, tuple, np.ndarray),
+                                 expectedrows: int=10000) -> str:
 
         if isinstance(data[0], str):
             objdt = 's'
@@ -747,7 +752,7 @@ class H5ColStore(object):
         elif not isinstance(data[0], (int, float, np.int, np.float, np.ndarray)):
             raise Exception(f"Unknown type in col: {col_name} type:{type(data[0])} in {self._h5file}")
 
-        earray_col = self._create_column(h5, self._path(table_path, col_name), data=data)
+        earray_col = self._create_column(h5, self._path(table_path, col_name), data=data, expectedrows=expectedrows)
 
         if re.match(r'[if]', str(earray_col.dtype)):
             m = re.match(r'([if])', str(earray_col.dtype))
