@@ -94,10 +94,10 @@ Benchmarks
 ==========
 
 Running the h5_speed_checks.py file in the tests directory allows some benchmarks of using Simpleh5 over pytables directly.
-The test is a large number of columns 200 with 100k rows of data.
+The test is writing and reading 200 float columns with 100k rows of data.
 
 From the benchmarks the trade off is between writing data speed and reading subsets of data speed:
-  * Simpleh5 is 1.65x faster writing many columns of data.
+  * Simpleh5 is 1.65x faster writing the of data as columns.
   * Simpleh5 is 24x faster in reading a full single column of data.
   * Simpleh5 is 13x faster in reading a full single column of data when searching for a subset of that data.
   * Simpleh5 is 1.45x faster searching a column for a set of indicies (about 10%) and pulling 10 other columns based on that search.
