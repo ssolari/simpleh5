@@ -896,8 +896,8 @@ class H5ColStore(object):
 
         m = re.search(r's(\d+)', str(data.dtype).lower())
         if not m:
-            raise Exception(f'Data in column {colpath} should be similar to {coldtype} and is not {data.dtype}'
-                            f'in {self._h5file}')
+            raise Exception(f'Data in column {colpath} should be similar to {coldtype} and is {data.dtype}'
+                            f' in {self._h5file}')
         dlen = int(m.group(1))
         if dlen > size:
             if not resize:
