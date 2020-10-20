@@ -408,7 +408,7 @@ class H5ColStore(object):
                 colnode[inds] = data
 
     def read_ctable(self, table_name: str, cols: Optional[list]=None, query: Union[list, tuple]=(),
-                    inds: Union[list, tuple]=()) -> dict:
+                    inds: Union[list, tuple]=(), flavor: str='') -> dict:
         """
         Read data from the table and return a dictionary of columns.  Data is returned in the flavor it was stored in.
 
@@ -453,6 +453,9 @@ class H5ColStore(object):
         :param cols: return only this list of columns
         :param query: see description above
         :param inds: a list of indices to pull, will override any query
+        :param flavor: ['python', 'numpy'], if set will force columns to be returned as either lists(python) or
+            numpy arrays (numpy).   Columns specified as objects 'o' or compressed objects 'c' ignore flavor.
+            Returning numpy arrays can be slightly faster.
         :return: return a dictionary of column name to list/array values
         """
 
@@ -503,7 +506,11 @@ class H5ColStore(object):
                 else:
                     return_data[col] = return_data[col]
 
-            if ATTR_COLFLAV in simpah5_attrs and \
+            if flavor and flavor == 'numpy':
+                pass
+            elif flavor and flavor == 'python' and isinstance(return_data[col], np.ndarray):
+                return_data[col] = return_data[col].tolist()
+            elif ATTR_COLFLAV in simpah5_attrs and \
                     simpah5_attrs[ATTR_COLFLAV][col] == 'python' and isinstance(return_data[col], np.ndarray):
                 return_data[col] = return_data[col].tolist()
             elif ATTR_COLFLAV not in simpah5_attrs and isinstance(return_data[col], np.ndarray):

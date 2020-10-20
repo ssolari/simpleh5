@@ -753,6 +753,44 @@ class TestDocStringExamples(unittest.TestCase):
                               'num_rows': 3, '_version': VERSION}
                              )
 
+    def test_flavor(self):
+        # check ead of different flavors
+        col_data = {
+            'col1': [1, 2, 3],
+            'col2': ['abc', 'def', 'geh'],
+            'col3': [
+                {'this is a dict': 123},
+                {'a': 2, 'hello': 'world'},
+                ['this is a list']
+            ],
+            'col4': np.array([1.2, 3.4, 5.6]),
+            'col5': ['abc', 'def', 'geh'],
+        }
+        # define table
+        col_dtype = {
+            'col1': 'i',  # integers
+            'col2': 's5',  # len 3 strings (after utf-8 conversion)
+            'col3': 'o100',  # uncompressed objects with final byte len 100
+            'col4': 'f',  # floats
+            'col5': 'c100',  # uncompressed objects with final byte len 100
+        }
+
+        unique_filename = str(uuid.uuid4()) + '.h5'
+        h = H5ColStore(os.path.join(self.tmp_dir, unique_filename))
+        h.create_ctable('mytable_1', col_dtypes=col_dtype)
+        h.append_ctable('mytable_1', col_data)
+
+        data = h.read_ctable('mytable_1', flavor='python')
+        for k, v in data.items():
+            self.assertIsInstance(v, list)
+
+        data = h.read_ctable('mytable_1', flavor='numpy')
+        for k, v in data.items():
+            if k == 'col3' or k == 'col5':
+                self.assertIsInstance(v, list)
+            else:
+                self.assertIsInstance(v, np.ndarray)
+
 
 if __name__ == "__main__":
     unittest.main()
