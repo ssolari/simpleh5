@@ -379,6 +379,37 @@ class TestMain(unittest.TestCase):
         with self.assertRaises(tb.NoSuchNodeError):
             h.delete_ctable('/table', raise_exception=True)
 
+    def test_iterrows(self):
+
+        unique_filename = str(uuid.uuid4()) + '.h5'
+        h = H5ColStore(os.path.join(self.tmp_dir, unique_filename))
+
+        dt = {
+            'o': 'o100',
+            'c': 'c100',
+            's': 's100',
+            'f': 'f',
+            'i': 'i',
+        }
+        h.create_ctable('/table', col_dtypes=dt)
+
+        col_data = {'o': [], 'c': [], 's': [], 'f': [], 'i': []}
+        for i in range(10):
+            col_data['o'].append(f'{i}')
+            col_data['c'].append(f'{i}' * 20)
+            col_data['s'].append(f'{i}' * 20)
+            col_data['f'].append(float(i))
+            col_data['i'].append(int(i))
+
+
+        h.append_ctable('table', col_data=col_data)
+
+        for col in ['s', 'o', 'c', 'f', 'i']:
+            newcol = []
+            for i, value in enumerate(h.iter_column('table', col)):
+                newcol.append(value)
+            self.assertListEqual(newcol, col_data[col])
+
     def test_col_same_length_exception(self):
 
         unique_filename = str(uuid.uuid4()) + '.h5'

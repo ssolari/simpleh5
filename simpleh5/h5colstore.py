@@ -519,6 +519,46 @@ class H5ColStore(object):
 
         return return_data
 
+    def iter_column(self, table_name: str, col: str, flavor: str=''):
+        """
+        Iterate through all values of a single column in table.
+
+        :param table_name:
+        :param col:
+        :return:
+        """
+
+        with self.open(mode='r') as h5:
+
+            simpah5_attrs = self._table_info(h5, table_name)
+            if len(simpah5_attrs) == 0:
+                raise Exception(f"{table_name} doesn't exist in {self._h5file}")
+            col_dtype = simpah5_attrs[ATTR_COLDTYPE]
+            nrows = simpah5_attrs[ATTR_NROWS]
+            return_cols = set(col_dtype.keys())
+            if col not in return_cols:
+                raise Exception(f'Specified column {col} not in {table_name} columns {list(return_cols)}')
+
+            dtype = col_dtype[col]
+            colflavor = simpah5_attrs[ATTR_COLFLAV][col]
+            colnode = self._get_col(h5, self._path(table_name, col))
+            for row in colnode.iterrows():
+
+                if dtype[0] == 's':
+                    yield row.decode('utf-8')
+                elif dtype[0] == 'o':
+                    yield msgpack_loads(row, compress=False)
+                elif dtype[0] == 'c':
+                    yield msgpack_loads(row, compress=True)
+                elif flavor and flavor == 'numpy':
+                    yield row
+                elif dtype[0] == 'f' or dtype[0] == 'n' and colflavor == 'python':
+                    yield float(row)
+                elif dtype[0] == 'i' and colflavor == 'python':
+                    yield int(row)
+                else:
+                    yield row
+
     def _append_ctable(self, h5, table_path: str, col_data: dict, resize: bool=True,
                        col_dtypes: Optional[dict]=None):
 
@@ -944,7 +984,7 @@ class H5ColStore(object):
         :return:
         """
 
-        tmp_name = self._h5file + str(uuid.uuid4())
+        tmp_name = str(uuid.uuid4()) + '.' + self._h5file
         with self.open(mode='r') as h5:
             h5.copy_file(tmp_name, filters=self._filters)
         os.remove(self._h5file)
