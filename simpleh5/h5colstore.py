@@ -912,6 +912,14 @@ class H5ColStore(object):
         with self.open(mode='r') as h5:
             return self._table_info(h5, table_name)
 
+    def table_nrows(self, table_name: str) -> dict:
+        """
+        Return the number of rows in the table
+        :param table_name:
+        :return:
+        """
+        return self.table_info(table_name).get(ATTR_NROWS, 0)
+
     def _table_info(self, h5, table_name: str) -> dict:
 
         simpah5_attrs = self._read_attrs(h5, table_name)
