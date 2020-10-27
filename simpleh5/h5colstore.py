@@ -912,7 +912,7 @@ class H5ColStore(object):
         with self.open(mode='r') as h5:
             return self._table_info(h5, table_name)
 
-    def table_nrows(self, table_name: str) -> dict:
+    def table_nrows(self, table_name: str) -> int:
         """
         Return the number of rows in the table
         :param table_name:
