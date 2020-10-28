@@ -992,7 +992,7 @@ class H5ColStore(object):
         :return:
         """
 
-        tmp_name = str(uuid.uuid4()) + '.' + self._h5file
+        tmp_name = self._h5file + '.' + str(uuid.uuid4())
         with self.open(mode='r') as h5:
             h5.copy_file(tmp_name, filters=self._filters)
         os.remove(self._h5file)
