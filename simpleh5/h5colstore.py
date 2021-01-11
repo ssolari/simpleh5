@@ -52,6 +52,9 @@ class H5ColStore(object):
         with self.open(mode='r') as h5:
             return h5.__str__()
 
+    def exists(self):
+        return os.path.exists(self._h5file)
+
     def open(self, mode: str='a') -> tb.File:
         """
         Open the file and return file handle to use with methods requiring open file handle.
@@ -814,6 +817,21 @@ class H5ColStore(object):
                             f"{table_path}/{col_name}: {str(earray_col.dtype)} in {self._h5file}")
 
         return dtype
+
+    def list_nodes(self, path='/', node_type='EArray'):
+        """
+        List all nodes found in path.
+
+        :param path: Starting path to look for tables.
+        :return:
+        """
+        with self.open(mode='r') as h5:
+            allnodes = []
+            for g in h5.walk_nodes(path, classname=node_type):
+                # if len(g._v_groups) == 0:
+                allnodes.append(g._v_pathname)
+
+        return allnodes
 
     def delete_rows(self, table_path: str, query: Union[list, tuple]=(), rows: Optional[list]=None) -> None:
         """
