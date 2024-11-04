@@ -38,7 +38,7 @@ class H5ColStore(object):
 
     def __init__(self, h5file: str):
 
-        if not re.search('\.h5$', h5file):
+        if not re.search(r'\.h5$', h5file):
             raise Exception(f'h5file should have a .h5 extension')
 
         # path to the .h5 file that will be operated on
@@ -799,7 +799,7 @@ class H5ColStore(object):
             data = [msgpack_dumps(x, compress=False) for x in data]
             objdt = 'o'
 
-        elif not isinstance(data[0], (int, float, np.int, np.float, np.ndarray)):
+        elif not isinstance(data[0], (int, float, int, float, np.ndarray)):
             raise Exception(f"Unknown type in col: {col_name} type:{type(data[0])} in {self._h5file}")
 
         earray_col = self._create_column(h5, self._path(table_path, col_name), data=data, expectedrows=expectedrows)
